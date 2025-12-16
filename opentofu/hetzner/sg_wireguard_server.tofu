@@ -12,6 +12,11 @@ resource "hcloud_primary_ip" "sg_wireguard_primary_ip" {
 
 resource "hcloud_firewall" "wireguard_server_firewall" {
   name = "wireguard-server-firewall"
+
+  labels = {
+    "role"   : "wireguard"
+  }
+
   rule {
     direction = "in"
     protocol  = "tcp"
@@ -45,12 +50,45 @@ resource "hcloud_firewall" "wireguard_server_firewall" {
     ]
   }
 
+  # TODO: Change SSH port to 20222 and use user script to update ssh config
   rule {
     direction = "in"
     protocol  = "tcp"
     description = "SSH Access"
-    port      = "20222"
+    port      = "22"
     source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+
+  rule {
+    direction = "out"
+    protocol  = "tcp"
+    description = "Allow all TCP egress"
+    port      = "any"
+    destination_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+
+  rule {
+    direction = "out"
+    protocol  = "udp"
+    description = "Allow all UDP egress"
+    port      = "any"
+    destination_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+
+  rule {
+    direction = "out"
+    protocol  = "icmp"
+    description = "Allow all ICMP egress"
+    destination_ips = [
       "0.0.0.0/0",
       "::/0"
     ]
@@ -78,6 +116,8 @@ resource "hcloud_server" "sg_wireguard_server" {
   ssh_keys = [
     hcloud_ssh_key.main.id
   ]
+
+  firewall_ids = [ hcloud_firewall.wireguard_server_firewall.id ]
 
   labels = {
     "region" : "singapore",
