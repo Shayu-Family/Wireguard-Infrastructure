@@ -35,3 +35,6 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Include sample variable definition files
+!opentofu.auto.sample.tfvars
