@@ -108,7 +108,7 @@ resource "hcloud_server" "sg_wireguard_server" {
   }
 
   public_net {
-    ipv4_enabled  = false
+    ipv4_enabled = var.sg_wireguard_server_include_public_ipv4
     ipv6_enabled = true
     ipv6         = hcloud_primary_ip.sg_wireguard_primary_ip.id
   }
@@ -127,9 +127,4 @@ resource "hcloud_server" "sg_wireguard_server" {
   depends_on = [
     hcloud_network_subnet.sg_subnet_01
   ]
-}
-
-output "sg_wireguard_server_ip_address" {
-  value       = hcloud_primary_ip.sg_wireguard_primary_ip.ip_address
-  description = "The public IPv6 address of the Wireguard server."
 }

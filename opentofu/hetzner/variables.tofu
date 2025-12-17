@@ -49,4 +49,10 @@ variable "sg_wireguard_server_private_ip_alias" {
   default = ["10.0.1.6", "10.0.1.7"]
 }
 
+variable "sg_wireguard_server_include_public_ipv4" {
+  description = "Set to 'true' to include a public IPv4 for the WireGuard server. Additional costs incurs for public IPv4."
+  type        = bool
+  default     = false
+}
+
 #endregion
