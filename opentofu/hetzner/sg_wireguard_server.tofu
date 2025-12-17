@@ -1,5 +1,7 @@
-resource "hcloud_primary_ip" "sg_wireguard_primary_ip" {
-  name          = "sg-wireguard-primary-ip"
+#region Server Primary IPs
+
+resource "hcloud_primary_ip" "sg_wireguard_primary_ipv6" {
+  name          = "sg-wireguard-primary-ip6"
   datacenter    = "sin-dc1"
   type          = "ipv6"
   assignee_type = "server"
@@ -11,6 +13,23 @@ resource "hcloud_primary_ip" "sg_wireguard_primary_ip" {
   }
 }
 
+resource "hcloud_primary_ip" "sg_wireguard_primary_ipv4" {
+  count         = var.sg_wireguard_server_include_public_ipv4 ? 1 : 0
+  
+  name          = "sg-wireguard-primary-ipv4"
+  datacenter    = "sin-dc1"
+  type          = "ipv4"
+  assignee_type = "server"
+  auto_delete = true
+  labels = {
+    "region" : "singapore",
+    "role"   : "wireguard",
+    "created_by" : "opentofu"
+  }
+}
+
+#endregion
+
 resource "hcloud_firewall" "wireguard_server_firewall" {
   name = "wireguard-server-firewall"
 
@@ -19,6 +38,7 @@ resource "hcloud_firewall" "wireguard_server_firewall" {
     "created_by" : "opentofu"
   }
 
+  # NOTE: Special Case to accept RTSP traffic.
   rule {
     direction = "in"
     protocol  = "tcp"
@@ -79,8 +99,10 @@ resource "hcloud_server" "sg_wireguard_server" {
 
   public_net {
     ipv4_enabled = var.sg_wireguard_server_include_public_ipv4
+    ipv4         = var.sg_wireguard_server_include_public_ipv4 ? hcloud_primary_ip.sg_wireguard_primary_ipv4[0].id : null
+
     ipv6_enabled = true
-    ipv6         = hcloud_primary_ip.sg_wireguard_primary_ip.id
+    ipv6         = hcloud_primary_ip.sg_wireguard_primary_ipv6.id
   }
 
   ssh_keys = [
