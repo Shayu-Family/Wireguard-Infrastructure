@@ -1,6 +1,10 @@
 resource "hcloud_network" "sg_network" {
   name     = "sg-network"
   ip_range =  var.sg_network_ip_range
+
+  labels = {
+    "created_by" : "opentofu"
+  }
 }
 
 #region Subnets

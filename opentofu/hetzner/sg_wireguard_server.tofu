@@ -6,7 +6,8 @@ resource "hcloud_primary_ip" "sg_wireguard_primary_ip" {
   auto_delete = true
   labels = {
     "region" : "singapore",
-    "role"   : "wireguard"
+    "role"   : "wireguard",
+    "created_by" : "opentofu"
   }
 }
 
@@ -15,6 +16,7 @@ resource "hcloud_firewall" "wireguard_server_firewall" {
 
   labels = {
     "role"   : "wireguard"
+    "created_by" : "opentofu"
   }
 
   rule {
@@ -61,38 +63,6 @@ resource "hcloud_firewall" "wireguard_server_firewall" {
       "::/0"
     ]
   }
-
-  rule {
-    direction = "out"
-    protocol  = "tcp"
-    description = "Allow all TCP egress"
-    port      = "any"
-    destination_ips = [
-      "0.0.0.0/0",
-      "::/0"
-    ]
-  }
-
-  rule {
-    direction = "out"
-    protocol  = "udp"
-    description = "Allow all UDP egress"
-    port      = "any"
-    destination_ips = [
-      "0.0.0.0/0",
-      "::/0"
-    ]
-  }
-
-  rule {
-    direction = "out"
-    protocol  = "icmp"
-    description = "Allow all ICMP egress"
-    destination_ips = [
-      "0.0.0.0/0",
-      "::/0"
-    ]
-  }
 }
 
 resource "hcloud_server" "sg_wireguard_server" {
@@ -114,14 +84,15 @@ resource "hcloud_server" "sg_wireguard_server" {
   }
 
   ssh_keys = [
-    hcloud_ssh_key.main.id
+    hcloud_ssh_key.opentofu_automation_key.id
   ]
 
   firewall_ids = [ hcloud_firewall.wireguard_server_firewall.id ]
 
   labels = {
     "region" : "singapore",
-    "role"   : "wireguard-server"
+    "role"   : "wireguard-server",
+    "created_by" : "opentofu"
   }
   
   depends_on = [
