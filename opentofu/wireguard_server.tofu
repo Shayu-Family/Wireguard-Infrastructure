@@ -1,29 +1,27 @@
 #region Server Primary IPs
 
-resource "hcloud_primary_ip" "sg_wireguard_primary_ipv6" {
-  name          = "sg-wireguard-primary-ip6"
-  datacenter    = "sin-dc1"
+resource "hcloud_primary_ip" "wireguard_primary_ipv6" {
+  name          = "wireguard-primary-ip6"
+  datacenter    = var.target_datacenter
   type          = "ipv6"
   assignee_type = "server"
   auto_delete = true
   labels = {
-    "region" : "singapore",
-    "role"   : "wireguard",
+    "role"   : "wireguard-server",
     "created_by" : "opentofu"
   }
 }
 
-resource "hcloud_primary_ip" "sg_wireguard_primary_ipv4" {
-  count         = var.sg_wireguard_server_include_public_ipv4 ? 1 : 0
+resource "hcloud_primary_ip" "wireguard_primary_ipv4" {
+  count         = var.wireguard_server_include_public_ipv4 ? 1 : 0
   
-  name          = "sg-wireguard-primary-ipv4"
-  datacenter    = "sin-dc1"
+  name          = "wireguard-primary-ipv4"
+  datacenter    = var.target_datacenter
   type          = "ipv4"
   assignee_type = "server"
   auto_delete = true
   labels = {
-    "region" : "singapore",
-    "role"   : "wireguard",
+    "role"   : "wireguard-server",
     "created_by" : "opentofu"
   }
 }
@@ -34,7 +32,7 @@ resource "hcloud_firewall" "wireguard_server_firewall" {
   name = "wireguard-server-firewall"
 
   labels = {
-    "role"   : "wireguard"
+    "role"   : "wireguard-server"
     "created_by" : "opentofu"
   }
 
@@ -85,24 +83,24 @@ resource "hcloud_firewall" "wireguard_server_firewall" {
   }
 }
 
-resource "hcloud_server" "sg_wireguard_server" {
-  name        = "sg-wireguard-server"
-  server_type = "cpx12"
+resource "hcloud_server" "wireguard_server" {
+  name        = "wireguard-server"
+  server_type = var.wireguard_server_type
   image       = "ubuntu-24.04"
-  datacenter  = "sin-dc1"
+  datacenter  = var.target_datacenter
 
   network {
-    network_id = hcloud_network.sg_network.id
-    ip         = var.sg_wireguard_server_private_ip
-    alias_ips  = var.sg_wireguard_server_private_ip_alias
+    network_id = hcloud_network.main_network.id
+    ip         = var.wireguard_server_private_ip
+    alias_ips  = var.wireguard_server_private_ip_alias
   }
 
   public_net {
-    ipv4_enabled = var.sg_wireguard_server_include_public_ipv4
-    ipv4         = var.sg_wireguard_server_include_public_ipv4 ? hcloud_primary_ip.sg_wireguard_primary_ipv4[0].id : null
+    ipv4_enabled = var.wireguard_server_include_public_ipv4
+    ipv4         = var.wireguard_server_include_public_ipv4 ? hcloud_primary_ip.wireguard_primary_ipv4[0].id : null
 
     ipv6_enabled = true
-    ipv6         = hcloud_primary_ip.sg_wireguard_primary_ipv6.id
+    ipv6         = hcloud_primary_ip.wireguard_primary_ipv6.id
   }
 
   ssh_keys = [
@@ -112,12 +110,11 @@ resource "hcloud_server" "sg_wireguard_server" {
   firewall_ids = [ hcloud_firewall.wireguard_server_firewall.id ]
 
   labels = {
-    "region" : "singapore",
     "role"   : "wireguard-server",
     "created_by" : "opentofu"
   }
   
   depends_on = [
-    hcloud_network_subnet.sg_subnet_01
+    hcloud_network_subnet.public_subnet
   ]
 }

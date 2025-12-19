@@ -13,46 +13,64 @@ variable "ssh_key_public_path" {
 
 #endreigon
 
-#region Singapore Networking
+#region Networking
 
-variable "sg_network_ip_range" {
-  description = "IP range for the sg-network"
+variable "network_zone" {
+  description = "Network zone for the subnets"
+  type        = string
+  default     = "eu-central"
+}
+
+variable "target_datacenter" {
+  description = "Datacenter where wireguard resources will be created"
+  type        = string
+  default     = "fsn1-dc14"
+}
+
+variable "network_cidr_block" {
+  description = "IP range for the main-network"
   type        = string
   default     = "10.0.0.0/20"
 }
 
-variable "sg_subnet_01_ip_range" {
-  description = "IP range for the first subnet in sg-network"
+variable "public_subnet_cidr_block" {
+  description = "IP range for the public subnet in main-network"
   type        = string
   default     = "10.0.0.0/22"
 }
 
-variable "sg_subnet_02_ip_range" {
-  description = "IP range for the second subnet in sg-network"
+variable "private_subnet_cidr_block" {
+  description = "IP range for the private subnet in main-network"
   type        = string
   default     = "10.0.4.0/22"
 }
 
 #endregion 
 
-#region Singapore Wireguard Server
+#region Wireguard Server
 
-variable "sg_wireguard_server_private_ip" {
-  description = "Private IP address for the Singapore Wireguard server"
+variable "wireguard_server_private_ip" {
+  description = "Private IP address for the Wireguard server"
   type        = string
   default     = "10.0.1.5"
 }
 
-variable "sg_wireguard_server_private_ip_alias" {
-  description = "Aliases for the Singapore Wireguard server private IP"
+variable "wireguard_server_private_ip_alias" {
+  description = "Aliases for the Wireguard server private IP"
   type    = list(string)
   default = ["10.0.1.6", "10.0.1.7"]
 }
 
-variable "sg_wireguard_server_include_public_ipv4" {
+variable "wireguard_server_include_public_ipv4" {
   description = "Set to 'true' to include a public IPv4 for the WireGuard server. Additional costs incurs for public IPv4."
   type        = bool
   default     = false
+}
+
+variable "wireguard_server_type" {
+  description = "Server type for the Wireguard server"
+  type        = string
+  default     = "cx23"
 }
 
 #endregion
