@@ -1,0 +1,39 @@
+---
+- name: Ensure WireGuard directory exists
+  file:
+    path: /etc/wireguard
+    state: directory
+    mode: '0700'
+    owner: root
+    group: root
+
+- name: Write WireGuard private key
+  copy:
+    dest: /etc/wireguard/privatekey
+    content: "{{ wireguard_server.private_key }}\n"
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Write WireGuard public key
+  copy:
+    dest: /etc/wireguard/publickey
+    content: "{{ wireguard_server.public_key }}\n"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Render WireGuard interface configuration
+  template:
+    src: wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Restart WireGuard
+
+- name: Enable and start WireGuard service
+  systemd:
+    name: wg-quick@wg0
+    enabled: yes
+    state: started

@@ -1,0 +1,26 @@
+---
+# Copy this to group_vars/wireguard_servers.yml and fill in your real keys/IPs.
+# This file is intentionally not committed; see .gitignore.
+
+wireguard_server:
+  address: "172.16.1.2/24"
+  listen_port: 51820
+  private_key: "<server_private_key>"
+  public_key: "<server_public_key>"
+
+wireguard_peers:
+  - name: "WQ Homelab"
+    public_key: "<peer1_public_key>"
+    preshared_key: "<peer1_preshared_key>"
+    allowed_ips: "172.16.1.3/32"
+  - name: "Mandy Homelab"
+    public_key: "<peer2_public_key>"
+    preshared_key: "<peer2_preshared_key>"
+    allowed_ips: "172.16.1.4/32"
+  - name: "TY Homelab"
+    public_key: "<peer3_public_key>"
+    preshared_key: "<peer3_preshared_key>"
+    allowed_ips: "172.16.1.5/32"
+
+ansible_user: root
+ansible_port: 22
