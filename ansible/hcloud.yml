@@ -2,9 +2,5 @@
 plugin: hetzner.hcloud.hcloud
 api_token: "{{ hcloud_token | default(lookup('env', 'HCLOUD_TOKEN')) }}"
 label_selector: role=wireguard-server
-
 compose:
   ansible_host: hcloud_ipv6 or hcloud_private_ipv4 or hcloud_ipv4
-
-groups:
-  wireguard_servers: hcloud_labels.get('role', '') == 'wireguard-server'

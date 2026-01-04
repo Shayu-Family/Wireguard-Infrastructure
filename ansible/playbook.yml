@@ -1,6 +1,7 @@
 ---
 - name: WireGuard server setup (Ubuntu 24.04)
-  hosts: wireguard_servers
+  hosts: wireguard-server
+  remote_user: root
   become: yes
   gather_facts: yes
   serial: 1

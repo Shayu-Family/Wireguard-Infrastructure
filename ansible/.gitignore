@@ -1,1 +1,3 @@
-group_vars/wireguard_servers.yml
+
+group_vars/wireguard-server.yml
+host_vars/wireguard-server.yml

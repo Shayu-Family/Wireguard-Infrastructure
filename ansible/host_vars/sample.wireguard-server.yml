@@ -1,5 +1,5 @@
 ---
-# Copy this to group_vars/wireguard_servers.yml and fill in your real keys/IPs.
+# Copy this to host_vars/wireguard-server.yml and fill in your real keys/IPs.
 # This file is intentionally not committed; see .gitignore.
 
 wireguard_server:

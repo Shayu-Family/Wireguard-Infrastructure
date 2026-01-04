@@ -38,3 +38,5 @@ terraform.rc
 
 # Include sample variable definition files
 !opentofu.auto.sample.tfvars
+
+s3.env
